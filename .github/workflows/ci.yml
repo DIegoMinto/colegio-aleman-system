@@ -1,0 +1,37 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+  pull_request:
+    branches: [main]
+
+jobs:
+  laravel-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del codigo
+        uses: actions/checkout@v4
+
+      - name: Configurar Docker Compose
+        run: docker compose version
+
+      - name: Levantar contenedores
+        run: docker compose up -d --build
+
+      - name: Ver contenedores activos
+        run: docker compose ps
+
+      - name: Esperar base de datos
+        run: sleep 15
+
+      - name: Ejecutar migraciones
+        run: docker compose exec -T app php artisan migrate --force
+
+      - name: Limpiar cache Laravel
+        run: docker compose exec -T app php artisan optimize:clear
+
+      - name: Verificar Laravel
+        run: docker compose exec -T app php artisan about
