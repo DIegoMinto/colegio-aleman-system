@@ -1,0 +1,69 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-dark-red: rgb(192, 57, 43);
+    --color-dark-yellow: rgb(212, 175, 55);
+}
+
+@utility txt-title-main {
+    @apply text-3xl font-extrabold text-black tracking-wide uppercase;
+}
+
+@utility txt-text{
+    @apply font-sans text-black tracking-wide;
+}
+
+@utility label-text{
+    @apply font-sans text-black tracking-wide font-semibold uppercase;
+}
+
+
+@utility form-input-text {
+    @apply w-full
+           border
+           border-gray-300
+           bg-white
+           px-5
+           py-3
+           rounded-xl
+           placeholder-gray-400
+           shadow-sm
+           transition
+           duration-200;
+
+    @apply focus:outline-none
+           focus:border-dark-red
+}
+
+@utility sidebar-link {
+    @apply flex items-center px-4 py-2.5 txt-text font-medium text-gray-500 transition duration-200 cursor-pointer;
+    @apply hover:bg-white hover:text-dark-red;
+}
+
+@utility sidebar-link-active {
+    @apply flex items-center px-4 py-2.5 txt-text font-medium text-dark-red border-l-10 border-dark-red bg-gray-200 cursor-pointer;
+}
+
+@layer components {
+
+    .btn-red {
+        @apply bg-dark-red
+               text-white
+               font-bold
+               px-5
+               py-3
+               rounded-xl
+               transition
+               duration-200
+               shadow-md;
+            cursor: pointer;
+    }
+}
