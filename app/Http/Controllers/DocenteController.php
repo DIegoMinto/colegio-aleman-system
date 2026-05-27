@@ -9,6 +9,7 @@ use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class DocenteController extends Controller
 {
@@ -72,5 +73,83 @@ class DocenteController extends Controller
 
         return redirect()->route('profesores.index')
             ->with('success', 'Profesor registrado correctamente.');
+    }
+
+    public function destroy(Request $request, Docente $docente)
+    {
+        $request->validate([
+            'password_confirm' => 'required|string',
+        ]);
+
+        // Verificar contraseña del usuario logueado
+        if (!Hash::check($request->password_confirm, Auth::user()->password)) {
+            return back()->withErrors(['password_confirm' => 'Contraseña incorrecta.']);
+        }
+
+        DB::transaction(function () use ($docente) {
+            $persona = $docente->persona;
+
+            $docente->delete();
+            $persona->usuario?->delete();
+            $persona->delete();
+        });
+
+        return redirect()->route('profesores.index')
+            ->with('success', 'Profesor eliminado correctamente.');
+    }
+
+    public function edit(Docente $docente)
+    {
+        $docente->load('persona.usuario');
+        return view('dashboard.profesores.edit', compact('docente'));
+    }
+
+    public function update(Request $request, Docente $docente)
+    {
+        $docente->load('persona.usuario');
+
+        $request->validate([
+            'nombres' => 'required|string|max:100',
+            'apellido_p' => 'required|string|max:50',
+            'apellido_m' => 'nullable|string|max:50',
+            'ci' => 'required|string|max:20|unique:personas,ci,' . $docente->persona->id_personas . ',id_personas',
+            'extension_ci' => 'required|string|max:5',
+            'fecha_nacimiento' => 'required|date',
+            'domicilio' => 'nullable|string|max:255',
+            'celular' => 'nullable|string|max:15',
+            'departamento_residencia' => 'nullable|string|max:50',
+            'email' => 'required|email|unique:usuarios,email,' . $docente->persona->usuario->id_usuarios . ',id_usuarios',
+            'user' => 'required|string|max:50|unique:usuarios,user,' . $docente->persona->usuario->id_usuarios . ',id_usuarios',
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        DB::transaction(function () use ($request, $docente) {
+
+            $docente->persona->update([
+                'nombres' => $request->nombres,
+                'apellido_p' => $request->apellido_p,
+                'apellido_m' => $request->apellido_m,
+                'ci' => $request->ci,
+                'extension_ci' => $request->extension_ci,
+                'fecha_nacimiento' => $request->fecha_nacimiento,
+                'domicilio' => $request->domicilio,
+                'celular' => $request->celular,
+                'departamento_residencia' => $request->departamento_residencia,
+            ]);
+
+            $dataUsuario = [
+                'email' => $request->email,
+                'user' => $request->user,
+            ];
+
+            if ($request->filled('password')) {
+                $dataUsuario['password'] = Hash::make($request->password);
+            }
+
+            $docente->persona->usuario->update($dataUsuario);
+        });
+
+        return redirect()->route('profesores.index')
+            ->with('success', 'Profesor actualizado correctamente.');
     }
 }
