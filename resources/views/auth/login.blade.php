@@ -73,7 +73,7 @@
                     @csrf
 
                     <div class="txt-text mb-6">
-                        Mensaje de prueba para ver el deploy
+                        Ingrese sus credenciales para acceder a la plataforma.
                     </div>
 
                     <div class="mb-4">
