@@ -10,7 +10,7 @@
 <body>
     @extends('layouts.dashboard')
 
-    @section('title', 'Profesores - SGA Colegio Alemán')
+    @section('title', 'Profesores - Colegio Alemán')
 
     @section('content')
 

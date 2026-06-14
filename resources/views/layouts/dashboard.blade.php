@@ -46,8 +46,17 @@
                     class="{{ request()->routeIs('profesores*') ? 'sidebar-link-active' : 'sidebar-link' }}">
                     <span class="ml-3">Profesores</span>
                 </a>
-                <a href="#" class="{{ request()->routeIs('asignaciones*') ? 'sidebar-link-active' : 'sidebar-link' }}">
+                <a href="{{ route('asignaciones.index') }}"
+                    class="{{ request()->routeIs('asignaciones*') ? 'sidebar-link-active' : 'sidebar-link' }}">
                     <span class="ml-3">Asignaciones</span>
+                </a>
+                <a href="{{ route('cursos.index') }}"
+                    class="{{ request()->routeIs('cursos*') ? 'sidebar-link-active' : 'sidebar-link' }}">
+                    <span class="ml-3">Gestión de Cursos</span>
+                </a>
+                <a href="{{ route('materias.index') }}"
+                    class="{{ request()->routeIs('materias*') ? 'sidebar-link-active' : 'sidebar-link' }}">
+                    <span class="ml-3">Gestión de Materias</span>
                 </a>
             </nav>
 

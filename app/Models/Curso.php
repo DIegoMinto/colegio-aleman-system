@@ -13,7 +13,7 @@ class Curso extends Model
     protected $fillable = [
         'nombre',
         'nivel',
-        'gestion'
+        'paralelo'
     ];
 
     public function inscripciones()

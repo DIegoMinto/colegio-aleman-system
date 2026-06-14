@@ -12,7 +12,8 @@ class Inscripcion extends Model
 
     protected $fillable = [
         'id_estudiantes',
-        'id_cursos'
+        'id_cursos',
+        'gestion'
     ];
 
     public function estudiante()

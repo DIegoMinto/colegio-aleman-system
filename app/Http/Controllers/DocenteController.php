@@ -18,12 +18,12 @@ class DocenteController extends Controller
         $docentes = Docente::with(['persona.usuario.rol'])
             ->get();
 
-        return view('dashboard.profesores.index', compact('docentes'));
+        return view('profesores.index', compact('docentes'));
     }
     public function create()
     {
         $roles = Role::all();
-        return view('dashboard.profesores.create', compact('roles'));
+        return view('profesores.create', compact('roles'));
     }
 
     public function store(Request $request)
@@ -81,7 +81,6 @@ class DocenteController extends Controller
             'password_confirm' => 'required|string',
         ]);
 
-        // Verificar contraseña del usuario logueado
         if (!Hash::check($request->password_confirm, Auth::user()->password)) {
             return back()->withErrors(['password_confirm' => 'Contraseña incorrecta.']);
         }
@@ -101,7 +100,7 @@ class DocenteController extends Controller
     public function edit(Docente $docente)
     {
         $docente->load('persona.usuario');
-        return view('dashboard.profesores.edit', compact('docente'));
+        return view('profesores.edit', compact('docente'));
     }
 
     public function update(Request $request, Docente $docente)
