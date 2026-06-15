@@ -25,32 +25,27 @@ class NoticiaController extends Controller
         $request->validate([
             'titulo' => 'required|string|max:150',
             'contenido' => 'required|string',
-            'archivo' => 'nullable|file|max:10240', // Opcional: limita a máximo 10MB
+            'archivo' => 'nullable',
         ]);
 
         $archivoUrl = null;
         $tipoArchivo = null;
 
-        try {
+        try { // <--- AQUÍ ABRE EL TRY
             if ($request->hasFile('archivo')) {
                 $file = $request->file('archivo');
                 $extension = strtolower($file->getClientOriginalExtension());
-
                 $tipoArchivo = ($extension === 'pdf') ? 'pdf' : 'imagen';
 
-                // Subida limpia a S3 (retorna el path exacto como un string robusto)
                 $path = $file->store('noticias', 's3');
 
-                // Si por alguna razón la subida falla silenciosamente, lanzamos excepción
                 if (!$path) {
-                    throw new \Exception('El driver de S3 no devolvió un path válido al guardar el archivo.');
+                    throw new \Exception('El driver de S3 no devolvió un path válido.');
                 }
 
-                // Generamos la URL final en AWS
                 $archivoUrl = Storage::disk('s3')->url($path);
-            }
+            } // <--- CIERRA EL IF DEL ARCHIVO
 
-            // Guardamos el registro en la base de datos
             Noticia::create([
                 'titulo' => $request->titulo,
                 'contenido' => $request->contenido,
@@ -60,17 +55,10 @@ class NoticiaController extends Controller
 
             return redirect()->route('noticias.index')->with('success', '¡Noticia escolar publicada con éxito!');
 
-        } catch (\Exception $e) {
-            // Guardamos el error real en los logs de Laravel para que puedas revisarlo en el servidor
-            Log::error('Error al subir noticia a S3 o BD: ' . $e->getMessage(), [
-                'archivo' => $e->getFile(),
-                'linea' => $e->getLine()
-            ]);
-
-            // Redirigimos al usuario hacia atrás con un mensaje controlado para que no se rompa la app
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'Hubo un problema al subir el archivo o procesar la noticia. Por favor, revisa tus credenciales de almacenamiento.');
+        } // <--- ¡OJO AQUÍ! Esta llave DEBE cerrar el bloque try justo antes del catch
+        catch (\Exception $e) {
+            Log::error('Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Algo falló.');
         }
     }
 }
