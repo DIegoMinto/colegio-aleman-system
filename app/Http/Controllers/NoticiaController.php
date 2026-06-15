@@ -21,6 +21,7 @@ class NoticiaController extends Controller
 
     public function store(Request $request)
     {
+        dd($request->all(), $request->hasFile('archivo'));
         $request->validate([
             'titulo' => 'required|string|max:150',
             'contenido' => 'required|string',
