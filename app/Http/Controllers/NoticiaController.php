@@ -39,7 +39,7 @@ class NoticiaController extends Controller
                 $tipoArchivo = ($extension === 'pdf') ? 'pdf' : 'imagen';
 
                 // Subida limpia a S3 (retorna el path exacto como un string robusto)
-                $path = $file->store('noticias', 's3');
+                $path = Storage::disk('s3')->putFile('noticias', $file);
 
                 if (!$path) {
                     throw new \Exception('El driver de S3 no devolvió un path válido al guardar el archivo.');
