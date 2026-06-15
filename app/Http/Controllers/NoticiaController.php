@@ -31,21 +31,25 @@ class NoticiaController extends Controller
         $archivoUrl = null;
         $tipoArchivo = null;
 
-        try { // <--- AQUÍ ABRE EL TRY
+        try {
             if ($request->hasFile('archivo')) {
                 $file = $request->file('archivo');
                 $extension = strtolower($file->getClientOriginalExtension());
+
                 $tipoArchivo = ($extension === 'pdf') ? 'pdf' : 'imagen';
 
+                // Subida limpia a S3 (retorna el path exacto como un string robusto)
                 $path = $file->store('noticias', 's3');
 
                 if (!$path) {
-                    throw new \Exception('El driver de S3 no devolvió un path válido.');
+                    throw new \Exception('El driver de S3 no devolvió un path válido al guardar el archivo.');
                 }
 
+                // Generamos la URL final en AWS
                 $archivoUrl = Storage::disk('s3')->url($path);
-            } // <--- CIERRA EL IF DEL ARCHIVO
+            }
 
+            // Guardamos el registro en la base de datos
             Noticia::create([
                 'titulo' => $request->titulo,
                 'contenido' => $request->contenido,
@@ -55,10 +59,16 @@ class NoticiaController extends Controller
 
             return redirect()->route('noticias.index')->with('success', '¡Noticia escolar publicada con éxito!');
 
-        } // <--- ¡OJO AQUÍ! Esta llave DEBE cerrar el bloque try justo antes del catch
-        catch (\Exception $e) {
-            Log::error('Error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Algo falló.');
+        } catch (\Exception $e) {
+            // En producción guarda el error en el log interno sin romper la pantalla
+            Log::error('Error al subir noticia a S3 o BD: ' . $e->getMessage(), [
+                'archivo' => $e->getFile(),
+                'linea' => $e->getLine()
+            ]);
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Hubo un problema al procesar la noticia. Revisa la configuración de almacenamiento.');
         }
     }
 }
