@@ -7,6 +7,7 @@ use App\Http\Controllers\DocenteController;
 use App\Http\Controllers\CursoController;
 use App\Http\Controllers\MateriaController;
 use App\Http\Controllers\AsignacionController;
+use App\Http\Controllers\NoticiaController;
 
 //RUTAS LOGIN
 Route::get('/', function () {
@@ -50,4 +51,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/asignaciones', [AsignacionController::class, 'store'])->name('asignaciones.store');
     Route::get('/asignaciones/{id}/editar', [AsignacionController::class, 'edit'])->name('asignaciones.edit');
     Route::delete('/asignaciones/{id}', [AsignacionController::class, 'destroy'])->name('asignaciones.destroy');
+
+    //RUTAS NOTICIAS
+    Route::get('/noticias', [NoticiaController::class, 'index'])->name('noticias.index');
+    Route::get('/noticias/crear', [NoticiaController::class, 'create'])->name('noticias.create');
+    Route::post('/noticias', [NoticiaController::class, 'store'])->name('noticias.store');
 });

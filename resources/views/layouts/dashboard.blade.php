@@ -58,6 +58,11 @@
                     class="{{ request()->routeIs('materias*') ? 'sidebar-link-active' : 'sidebar-link' }}">
                     <span class="ml-3">Gestión de Materias</span>
                 </a>
+                <a href="{{ route('noticias.index') }}"
+                    class="{{ request()->routeIs('noticias*') ? 'sidebar-link-active' : 'sidebar-link' }}">
+                    <span class="ml-3">Noticias</span>
+                </a>
+
             </nav>
 
             <div class="p-4">

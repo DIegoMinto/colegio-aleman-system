@@ -25,6 +25,13 @@ jobs:
 
             git pull origin main
 
+            # El comando 'sed' busca la variable en tu .env y la reemplaza por el secreto encriptado de GitHub
+            sed -i "s|^AWS_ACCESS_KEY_ID=.*|AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}|" .env
+            sed -i "s|^AWS_SECRET_ACCESS_KEY=.*|AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}|" .env
+            sed -i "s|^AWS_DEFAULT_REGION=.*|AWS_DEFAULT_REGION=us-east-1|" .env
+            sed -i "s|^AWS_BUCKET=.*|AWS_BUCKET=${{ secrets.AWS_BUCKET }}|" .env
+            sed -i "s|^AWS_USE_PATH_STYLE_ENDPOINT=.*|AWS_USE_PATH_STYLE_ENDPOINT=false|" .env
+
             sudo docker compose down
 
             sudo docker compose up -d --build
