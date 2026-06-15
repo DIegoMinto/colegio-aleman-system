@@ -55,5 +55,6 @@ Route::middleware('auth')->group(function () {
     //RUTAS NOTICIAS
     Route::get('/noticias', [NoticiaController::class, 'index'])->name('noticias.index');
     Route::get('/noticias/crear', [NoticiaController::class, 'create'])->name('noticias.create');
-    Route::post('/noticias', [NoticiaController::class, 'store'])->name('noticias.store');
+
 });
+Route::post('/noticias', [NoticiaController::class, 'store'])->name('noticias.store');
